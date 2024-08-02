@@ -9,6 +9,7 @@ import (
 
 type UserRepository interface {
 	FindAll(ctx context.Context) ([]entity.User, error)
+	FindByID(ctx context.Context, id int64) (*entity.User, error)
 }
 
 type userRepository struct {
@@ -27,3 +28,13 @@ func (r *userRepository) FindAll(ctx context.Context) ([]entity.User, error) {
 	}
 	return users, nil
 }
+
+func (r *userRepository) FindByID(ctx context.Context, id int64) (*entity.User, error) {
+	user := new(entity.User)
+
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+

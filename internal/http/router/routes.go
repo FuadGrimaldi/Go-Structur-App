@@ -19,6 +19,11 @@ func PublicRoutes(UserHandler *handler.UserHandler) []*Route {
 			Path: "/users",
 			Handler: UserHandler.FindAllUser,
 		},
+		{
+			Method: echo.GET,
+			Path: "/user/:id",
+			Handler: UserHandler.FindOneUser,
+		},
 	}
 }
 
