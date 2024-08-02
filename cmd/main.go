@@ -7,25 +7,18 @@ import (
 	"go-app/pkg/server"
 )
 
-type User struct {
-	ID int64
-	Name string
-	Address string
-	Gender string
-	Email string
-}
 
 func main() {
 	cfg, err := config.NewConfig(".env")
 	checkError(err)
 
-	_, err = database.ConnectToPostgres(cfg)
+	db, err := database.ConnectToPostgres(cfg)
 	checkError(err)
 
-	_ = builder.BuildPublicRoutes()
+	publicRoutes := builder.BuildPublicRoutes(db)
 	_ = builder.BuildPrivateRoutes()
 
-	srv := server.NewServer(cfg)
+	srv := server.NewServer(cfg, publicRoutes)
 	srv.Run()
 	srv.GracefulShutdown()
 }

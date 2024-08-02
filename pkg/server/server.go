@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"go-app/config"
+	"go-app/internal/http/router"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -18,11 +18,11 @@ type Server struct {
 	cfg *config.Config
 }
 
-func NewServer(cfg *config.Config) *Server {
+func NewServer(cfg *config.Config, publicRoutes []*router.Route) *Server {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	for _, v := range publicRoutes {
+		e.Add(v.Method, v.Path, v.Handler)
+	}
 	return &Server{e, cfg}
 }
 func (s *Server) Run() {
