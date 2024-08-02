@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"go-app/config"
+	"go-app/internal/builder"
 	"go-app/pkg/database"
+	"go-app/pkg/server"
 )
 
 type User struct {
@@ -18,15 +19,15 @@ func main() {
 	cfg, err := config.NewConfig(".env")
 	checkError(err)
 
-	db, err := database.ConnectToPostgres(cfg)
+	_, err = database.ConnectToPostgres(cfg)
 	checkError(err)
 
-	users := make([]User, 0)
-	err = db.Table("user_tb").Find(&users).Error
-	checkError(err)
+	_ = builder.BuildPublicRoutes()
+	_ = builder.BuildPrivateRoutes()
 
-	fmt.Println(users)
-	fmt.Println(cfg)
+	srv := server.NewServer(cfg)
+	srv.Run()
+	srv.GracefulShutdown()
 }
 
 func checkError(err error) {
