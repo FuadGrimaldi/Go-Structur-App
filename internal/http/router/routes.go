@@ -2,6 +2,7 @@ package router
 
 import (
 	"go-app/internal/http/handler"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,19 +16,24 @@ type Route struct {
 func PublicRoutes(UserHandler *handler.UserHandler) []*Route {
 	return []*Route{
 		{
-			Method: echo.GET,
-			Path: "/user",
+			Method: http.MethodGet,
+			Path: "/users",
 			Handler: UserHandler.FindAllUser,
 		},
 		{
-			Method: echo.GET,
-			Path: "/user/:id",
+			Method: http.MethodGet,
+			Path: "/users/:id",
 			Handler: UserHandler.FindOneUser,
 		},
 		{
-			Method: echo.POST,
-			Path: "/user",
+			Method: http.MethodPost,
+			Path: "/users",
 			Handler: UserHandler.CreateUser,
+		},
+		{
+			Method: http.MethodPut,
+			Path: "/users/:id",
+			Handler: UserHandler.UpdateUser,
 		},
 		// {
 		// 	Method: http.MethodPost,

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"go-app/config"
 	"go-app/internal/common"
 	"go-app/internal/dto"
@@ -19,6 +20,7 @@ type UserService interface {
 	FindAll(ctx context.Context) ([]dto.User, error)
 	FindOne(ctx context.Context, id int64) (*dto.User, error)
 	Create(ctx context.Context, request dto.NewUser) error
+	Update(ctx context.Context, request dto.UpdateUser) error
 }
 
 type userService struct {
@@ -102,4 +104,31 @@ func (u *userService) Create(ctx context.Context, request dto.NewUser)error{
 	
 	// Create user using repository
 	return u.repository.Create(ctx, &user)
+}
+
+func (u *userService) Update(ctx context.Context, request dto.UpdateUser)error {
+	user, err := u.repository.FindByID(ctx, request.ID)
+	fmt.Println(request.ID)
+	if err != nil {
+		return err
+	}
+
+	if request.Name != "" {
+		user.Name = request.Name
+	}
+
+	if request.Username != "" {
+		user.Username = request.Username
+	}
+
+	if request.Password != "" {
+		password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+
+		user.Password = string(password)
+	}
+
+	return u.repository.Update(ctx, user)
 }

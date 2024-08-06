@@ -84,10 +84,31 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 	if err := c.Bind(&request); err != nil {
 		return util.JSONResponse(c, http.StatusBadRequest, err.Error(), nil)
 	}
-
+	
 	if err := h.userService.Create(c.Request().Context(), request); err != nil {
 		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
 	}
-
+	
 	return util.JSONResponse(c, http.StatusCreated, "Succsesfully create user", request)
+}
+
+func (h *UserHandler) UpdateUser(c echo.Context) error {
+	var request dto.UpdateUser
+	
+	if err := c.Bind(&request); err != nil {
+		return util.JSONResponse(c, http.StatusBadRequest, err.Error(), nil)
+	}
+	
+	userID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil || userID == 0 {
+		return util.JSONResponse(c, http.StatusBadRequest, "Invalid user ID", nil)
+	}
+
+	request.ID = userID
+	
+	if err := h.userService.Update(c.Request().Context(), request); err != nil {
+		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+	return util.JSONResponse(c, http.StatusOK, "Succsesfully update user", request)
+	
 }
