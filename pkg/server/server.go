@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"go-app/config"
+	"go-app/internal/common"
 	"go-app/internal/http/router"
 	"log"
 	"os"
 	"os/signal"
 	"time"
 
+	"github.com/golang-jwt/jwt/v4"
+	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,11 +21,15 @@ type Server struct {
 	cfg *config.Config
 }
 
+// func NewServer(cfg *config.Config, publicRoutes, privateRoutes []*router.Route) *Server {
 func NewServer(cfg *config.Config, publicRoutes []*router.Route) *Server {
 	e := echo.New()
 	for _, v := range publicRoutes {
 		e.Add(v.Method, v.Path, v.Handler)
 	}
+	// for _, v := range privateRoutes {
+	// 	e.Add(v.Method, v.Path, v.Handler, JWTMiddleware(cfg.JWTSecretKey))
+	// }
 	return &Server{e, cfg}
 }
 func (s *Server) Run() {
@@ -45,4 +52,13 @@ func (s *Server) GracefulShutdown() {
 			s.Logger.Fatal(err)
 		}
 	}()
+}
+
+func JWTMiddleware(secretKey string) echo.MiddlewareFunc {
+	return echojwt.WithConfig(echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(common.JwtCustomClaims)
+		},
+		SigningKey: []byte(secretKey),
+	})
 }

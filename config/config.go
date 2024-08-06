@@ -8,16 +8,17 @@ import (
 type Config struct {
 	Env 		string			`env:"ENV" evDefault:"dev"`
 	Host    	string	        `env:"HOST" envDefault:"localhost"`
-	Port		string			`env:"PORT" envDefault: "8080"`
+	Port		string			`env:"PORT" envDefault:"8080"`
 	Postgres    PostgresConfig	`envPrefix:"POSTGRES_"`
+	JWTSecretKey string 		`env:"JWT_SECRET_KEY" envDefault:"secret"`
 }
 
 type PostgresConfig struct {
 	Host 		string 			`env:"HOST" envDefault:"localhost"`
-	Port		string			`env:"PORT" envDefault: "5432"`
-	User		string			`env:"USER" envDefault: "postgres"`
-	Password	string			`env:"PASSWORD" envDefault: "postgres"`
-	Database	string			`env:"DATABASE" envDefault: "postgres"`
+	Port		string			`env:"PORT" envDefault:"5432"`
+	User		string			`env:"USER" envDefault:"postgres"`
+	Password	string			`env:"PASSWORD" envDefault:"postgres"`
+	Database	string			`env:"DATABASE" envDefault:"postgres"`
 }
 
 func NewConfig(envPath string) (*Config, error) {

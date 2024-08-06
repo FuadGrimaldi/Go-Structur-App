@@ -15,7 +15,7 @@ func main() {
 	db, err := database.ConnectToPostgres(cfg)
 	checkError(err)
 
-	publicRoutes := builder.BuildPublicRoutes(db)
+	publicRoutes := builder.BuildPublicRoutes(cfg, db)
 	_ = builder.BuildPrivateRoutes()
 
 	srv := server.NewServer(cfg, publicRoutes)
