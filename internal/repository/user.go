@@ -13,7 +13,7 @@ type UserRepository interface {
 	FindByID(ctx context.Context, id int64) (*entity.User, error)
 	Update(ctx context.Context, user *entity.User) error
 	Create(ctx context.Context, user *entity.User) error
-	// Delete(ctx context.Context, id int64) (*entity.User, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 type userRepository struct {
@@ -66,3 +66,9 @@ func (r *userRepository) Update(ctx context.Context, user *entity.User) error {
 	return nil
 }
 
+func (r *userRepository) Delete(ctx context.Context, id int64) error {
+	if err := r.db.WithContext(ctx).Model(&entity.User{}).Delete("id = ?", id).Error; err != nil {
+		return err
+	}
+	return nil
+}

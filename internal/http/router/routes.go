@@ -35,6 +35,11 @@ func PublicRoutes(UserHandler *handler.UserHandler) []*Route {
 			Path: "/users/:id",
 			Handler: UserHandler.UpdateUser,
 		},
+		{
+			Method: http.MethodDelete,
+			Path: "/users/:id",
+			Handler: UserHandler.DeleteUser,
+		},
 		// {
 		// 	Method: http.MethodPost,
 		// 	Path: "/login",

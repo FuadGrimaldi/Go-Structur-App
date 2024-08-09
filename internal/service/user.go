@@ -21,6 +21,7 @@ type UserService interface {
 	FindOne(ctx context.Context, id int64) (*dto.User, error)
 	Create(ctx context.Context, request dto.NewUser) error
 	Update(ctx context.Context, request dto.UpdateUser) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type userService struct {
@@ -131,4 +132,8 @@ func (u *userService) Update(ctx context.Context, request dto.UpdateUser)error {
 	}
 
 	return u.repository.Update(ctx, user)
+}
+
+func (u *userService) Delete(ctx context.Context, id int64) error {
+	return u.repository.Delete(ctx, id)
 }

@@ -112,3 +112,15 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 	return util.JSONResponse(c, http.StatusOK, "Succsesfully update user", request)
 	
 }
+
+func (h *UserHandler) DeleteUser(c echo.Context) error {
+	idStr := c.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return util.JSONResponse(c, http.StatusBadRequest, "Invalid user ID", nil)
+	}
+	if err := h.userService.Delete(c.Request().Context(), id); err != nil {
+		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+	return util.JSONResponse(c, http.StatusOK, "Succsesfully delete user", nil)
+}
