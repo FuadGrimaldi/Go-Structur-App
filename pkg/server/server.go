@@ -21,15 +21,15 @@ type Server struct {
 	cfg *config.Config
 }
 
-// func NewServer(cfg *config.Config, publicRoutes, privateRoutes []*router.Route) *Server {
-func NewServer(cfg *config.Config, publicRoutes []*router.Route) *Server {
+func NewServer(cfg *config.Config, publicRoutes, privateRoutes []*router.Route) *Server {
+// func NewServer(cfg *config.Config, publicRoutes []*router.Route) *Server {
 	e := echo.New()
 	for _, v := range publicRoutes {
 		e.Add(v.Method, v.Path, v.Handler)
 	}
-	// for _, v := range privateRoutes {
-	// 	e.Add(v.Method, v.Path, v.Handler, JWTMiddleware(cfg.JWTSecretKey))
-	// }
+	for _, v := range privateRoutes {
+		e.Add(v.Method, v.Path, v.Handler, JWTMiddleware(cfg.JWTSecretKey))
+	}
 	return &Server{e, cfg}
 }
 func (s *Server) Run() {

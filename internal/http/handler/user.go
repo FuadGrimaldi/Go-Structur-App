@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"go-app/internal/dto"
 	"go-app/internal/service"
 	"go-app/internal/util"
@@ -27,34 +26,15 @@ func (h *UserHandler) GeneratePassword(c echo.Context) error {
 	}
 
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return util.JSONResponse(c, http.StatusBadRequest, err.Error(), nil)
 	}
 
 	encodedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
 	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"password": string(encodedPassword)})
-}
-
-
-func (h * UserHandler) Login(c echo.Context) error {
-	var request dto.LoginRequest
-
-	if err := c.Bind(&request); err != nil {
-		return util.JSONResponse(c, http.StatusBadRequest, err.Error(), nil)
-	}
-	
-	token, err := h.userService.Login(c.Request().Context(), request) 
-	if err != nil {
-		return util.JSONResponse(c, http.StatusUnauthorized, err.Error(), nil)
-	}
-	
-	message := fmt.Sprintf("token: %s", token)
-
-	return util.JSONResponse(c, http.StatusOK,message, nil)
+	return util.JSONResponse(c, http.StatusOK, "successfully generate password", encodedPassword)
 }
 
 func (h *UserHandler) FindAllUser(c echo.Context) error {

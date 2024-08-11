@@ -11,6 +11,7 @@ type User struct {
 	Username  string `gorm:"column:username"`
 	Password  string `gorm:"column:password"`
 	CreatedAt time.Time `gorm:"column:created_at"`
+	Role 	  string `gorm:"column:role"`
 }
 
 func (User) TableName() string {

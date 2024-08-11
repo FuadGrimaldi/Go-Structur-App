@@ -13,13 +13,23 @@ type Route struct {
 	Handler	echo.HandlerFunc
 }
 
-func PublicRoutes(UserHandler *handler.UserHandler) []*Route {
+func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHandler) []*Route {
 	return []*Route{
+		{
+			Method: http.MethodPost,
+			Path: "/login",
+			Handler: AuthHandler.Login,
+		},
 		{
 			Method: http.MethodGet,
 			Path: "/users",
 			Handler: UserHandler.FindAllUser,
 		},
+	}
+}
+
+func PrivateRoutes(UserHandler *handler.UserHandler) []*Route {
+	return []*Route{
 		{
 			Method: http.MethodGet,
 			Path: "/users/:id",
@@ -40,15 +50,5 @@ func PublicRoutes(UserHandler *handler.UserHandler) []*Route {
 			Path: "/users/:id",
 			Handler: UserHandler.DeleteUser,
 		},
-		// {
-		// 	Method: http.MethodPost,
-		// 	Path: "/login",
-		// 	Handler: UserHandler.Login,
-		// },
 	}
-}
-
-func PrivateRoutes() []*Route {
-	return []*Route{}
-
 }
