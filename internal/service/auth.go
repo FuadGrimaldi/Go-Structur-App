@@ -7,9 +7,7 @@ import (
 	"go-app/internal/common"
 	"go-app/internal/dto"
 	"go-app/internal/repository"
-	"time"
 
-	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,22 +37,9 @@ func (u *authService) Login(ctx context.Context, request dto.LoginRequest) (stri
 		return "", errors.New("username/password salah")
 	}
 
-	expiredTime := time.Now().Local().Add(10 * time.Minute)
-	claims := common.JwtCustomClaims{
-		Username: user.Username,
-		Name:     user.Name,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expiredTime),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	encodedToken, err := token.SignedString([]byte(u.cfg.JWTSecretKey))
-
+	token, err := common.GenerateAccessToken(ctx, user)
 	if err != nil {
 		return "", err
 	}
-
-	return encodedToken, nil
+	return token, nil
 }

@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"go-app/internal/common"
 	"go-app/internal/dto"
 	"go-app/internal/service"
 	"go-app/internal/util"
 	"net/http"
 	"strconv"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -51,12 +53,19 @@ func (h *UserHandler) FindOneUser(c echo.Context) error {
 	if err != nil {
 		return util.JSONResponse(c, http.StatusBadRequest, "Invalid user ID", nil)
 	}
+	userToken := c.Get("user").(*jwt.Token)
+	claims := userToken.Claims.(*common.JwtCustomClaims)
+	// Check if the user's id same with jwt id
+	if id != claims.ID {
+		return util.JSONResponse(c, http.StatusForbidden, "You don't have access to this user", nil)
+	}
 	user, err := h.userService.FindOne(c.Request().Context(), id)
 	if err != nil {
 		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
 	}
-	return util.JSONResponse(c, http.StatusOK, "Succsesfully read one user", user)
+	return util.JSONResponse(c, http.StatusOK, "Successfully read one user", user)
 }
+
 
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	var request dto.NewUser

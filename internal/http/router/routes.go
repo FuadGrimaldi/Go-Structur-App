@@ -7,11 +7,24 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	Admin = "admin"
+	User = "user"
+)
+
+var (
+	allRoles  = []string{Admin, User}
+	onlyAdmin = []string{Admin}
+	onlyUser  = []string{User}
+)
 type Route struct {
 	Method 	string
 	Path 	string
 	Handler	echo.HandlerFunc
+	Roles   []string
 }
+
+
 
 func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHandler) []*Route {
 	return []*Route{
@@ -19,11 +32,13 @@ func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHan
 			Method: http.MethodPost,
 			Path: "/login",
 			Handler: AuthHandler.Login,
+			Roles: allRoles,
 		},
 		{
-			Method: http.MethodGet,
+			Method: http.MethodPost,
 			Path: "/users",
-			Handler: UserHandler.FindAllUser,
+			Handler: UserHandler.CreateUser,
+			Roles: onlyUser,
 		},
 	}
 }
@@ -34,21 +49,25 @@ func PrivateRoutes(UserHandler *handler.UserHandler) []*Route {
 			Method: http.MethodGet,
 			Path: "/users/:id",
 			Handler: UserHandler.FindOneUser,
+			Roles: allRoles,
 		},
 		{
-			Method: http.MethodPost,
+			Method: http.MethodGet,
 			Path: "/users",
-			Handler: UserHandler.CreateUser,
+			Handler: UserHandler.FindAllUser,
+			Roles:   onlyAdmin,
 		},
 		{
 			Method: http.MethodPut,
 			Path: "/users/:id",
 			Handler: UserHandler.UpdateUser,
+			Roles: allRoles,
 		},
 		{
 			Method: http.MethodDelete,
 			Path: "/users/:id",
 			Handler: UserHandler.DeleteUser,
+			Roles: onlyAdmin,
 		},
 	}
 }
