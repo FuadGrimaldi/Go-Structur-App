@@ -42,7 +42,7 @@ func (ps *productService) Create(ctx context.Context, req dto.NewProduct) error 
 		Category: req.Category,
 		ISBN: req.ISBN,
 		Stoct: req.Stoct,
-		Price: req.Stoct,
+		Price: req.Price,
 	}
 	return ps.repository.Create(ctx, &product)
 }

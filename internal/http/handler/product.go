@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"go-app/internal/dto"
 	"go-app/internal/service"
 	"go-app/internal/util"
 	"net/http"
@@ -22,4 +23,17 @@ func (ph *ProductHandler) FindAllProduct(c echo.Context) error {
 		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
 	}
 	return util.JSONResponse(c, http.StatusOK, "Succsesfully read all users", products)
+}
+
+func (ph *ProductHandler) Create(c echo.Context) error {
+	var req dto.NewProduct
+
+	if err := c.Bind(&req); err != nil {
+		return util.JSONResponse(c, http.StatusBadRequest, err.Error(), nil)
+	}
+
+	if err := ph.productService.Create(c.Request().Context(), req); err != nil {
+		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+	return util.JSONResponse(c, http.StatusCreated, "Succsesfully create user", req)
 }

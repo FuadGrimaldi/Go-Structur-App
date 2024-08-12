@@ -26,7 +26,7 @@ type Route struct {
 
 
 
-func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHandler) []*Route {
+func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHandler, ProductHandler *handler.ProductHandler) []*Route {
 	return []*Route{
 		{
 			Method: http.MethodPost,
@@ -40,10 +40,15 @@ func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHan
 			Handler: UserHandler.CreateUser,
 			Roles: onlyUser,
 		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/generate-password",
+			Handler: UserHandler.GeneratePassword,
+		},
 	}
 }
 
-func PrivateRoutes(UserHandler *handler.UserHandler) []*Route {
+func PrivateRoutes(UserHandler *handler.UserHandler, ProductHandler *handler.ProductHandler) []*Route {
 	return []*Route{
 		{
 			Method: http.MethodGet,
@@ -68,6 +73,18 @@ func PrivateRoutes(UserHandler *handler.UserHandler) []*Route {
 			Path: "/users/:id",
 			Handler: UserHandler.DeleteUser,
 			Roles: onlyAdmin,
+		},
+		{
+			Method: http.MethodPost,
+			Path: "/products",
+			Handler: ProductHandler.Create,
+			Roles: onlyAdmin,
+		},
+		{
+			Method: http.MethodGet,
+			Path: "/products",
+			Handler: ProductHandler.FindAllProduct,
+			Roles:   onlyAdmin,
 		},
 	}
 }
