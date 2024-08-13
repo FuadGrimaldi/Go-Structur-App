@@ -5,12 +5,14 @@ import (
 	"go-app/internal/dto"
 	"go-app/internal/entity"
 	"go-app/internal/repository"
+	"strings"
 )
 
 type ProductService interface {
 	FindAll(ctx context.Context) ([]dto.Product, error)
 	Create(ctx context.Context, req dto.NewProduct) error
 	FindOneById(ctx context.Context, id int64) (*dto.Product, error)
+	FindOneByTitle(ctx context.Context, title string) (*dto.Product, error)
 }
 
 type productService struct {
@@ -36,6 +38,16 @@ func (ps *productService) FindAll(ctx context.Context) ([]dto.Product, error) {
 
 func (ps *productService) FindOneById(ctx context.Context, id int64) (*dto.Product, error) {
 	product, err := ps.repository.FindById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	productDto := &dto.Product{ID: product.ID, Title: product.Title, Author: product.Author, Publicatio_year: product.Publicatio_year, Description: product.Description, Category: product.Category, ISBN: product.ISBN, Stoct: product.Stoct, Price: product.Price }
+	return productDto, nil
+}
+
+func (ps *productService) FindOneByTitle(ctx context.Context, title string) (*dto.Product, error) {
+	titleStr := strings.ReplaceAll(title, "-", " ")
+	product, err := ps.repository.FindByTitle(ctx, titleStr)
 	if err != nil {
 		return nil, err
 	}

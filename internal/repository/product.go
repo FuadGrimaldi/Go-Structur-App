@@ -10,7 +10,7 @@ import (
 type ProductRepository interface {
 	FindAll(ctx context.Context) ([]entity.Product, error)
 	FindById(ctx context.Context, id int64) (*entity.Product, error)
-	// FindByTitle(ctx context.Context, title string) (*entity.Product, error)
+	FindByTitle(ctx context.Context, title string) (*entity.Product, error)
 	Create(ctx context.Context, product *entity.Product) error
 }
 
@@ -41,9 +41,20 @@ func (pr *productRepository) FindById(ctx context.Context, id int64) (*entity.Pr
 	return product, nil
 }
 
+func (pr *productRepository) FindByTitle(ctx context.Context, title string) (*entity.Product, error) {
+	product := new(entity.Product)
+
+	if err := pr.db.WithContext(ctx).Where("title = ?", title).First(&product).Error; err != nil {
+		return nil, err
+	}
+
+	return product, nil
+}
+
 func (pr *productRepository) Create(ctx context.Context, product *entity.Product) error {
 	if err := pr.db.WithContext(ctx).Create(&product).Error; err != nil {
 		return err
 	}
 	return nil
 }
+

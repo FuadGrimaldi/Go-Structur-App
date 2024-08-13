@@ -39,6 +39,16 @@ func (ph *ProductHandler) FindOneProductById(c echo.Context) error {
 	return util.JSONResponse(c, http.StatusOK, "Successfully read one product by id", product)
 }
 
+func (ph *ProductHandler) FindOneProductByTitle(c echo.Context) error {
+	title := c.Param("title")
+	
+	product, err := ph.productService.FindOneByTitle(c.Request().Context(), title)
+	if err != nil {
+		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+	return util.JSONResponse(c, http.StatusOK, "Successfully read one product by title", product)
+}
+
 func (ph *ProductHandler) Create(c echo.Context) error {
 	var req dto.NewProduct
 
