@@ -10,6 +10,7 @@ import (
 type ProductService interface {
 	FindAll(ctx context.Context) ([]dto.Product, error)
 	Create(ctx context.Context, req dto.NewProduct) error
+	FindOneById(ctx context.Context, id int64) (*dto.Product, error)
 }
 
 type productService struct {
@@ -30,6 +31,15 @@ func (ps *productService) FindAll(ctx context.Context) ([]dto.Product, error) {
 	for _, v := range products {
 		productDto = append(productDto, dto.Product{ID: v.ID, Title: v.Title, Author: v.Author, Publicatio_year: v.Publicatio_year, Description: v.Description, Category: v.Category, ISBN: v.ISBN, Stoct: v.Stoct, Price: v.Price })
 	}
+	return productDto, nil
+}
+
+func (ps *productService) FindOneById(ctx context.Context, id int64) (*dto.Product, error) {
+	product, err := ps.repository.FindById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	productDto := &dto.Product{ID: product.ID, Title: product.Title, Author: product.Author, Publicatio_year: product.Publicatio_year, Description: product.Description, Category: product.Category, ISBN: product.ISBN, Stoct: product.Stoct, Price: product.Price }
 	return productDto, nil
 }
 

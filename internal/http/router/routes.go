@@ -86,5 +86,11 @@ func PrivateRoutes(UserHandler *handler.UserHandler, ProductHandler *handler.Pro
 			Handler: ProductHandler.FindAllProduct,
 			Roles:   onlyAdmin,
 		},
+		{
+			Method: http.MethodGet,
+			Path: "/products/:id",
+			Handler: ProductHandler.FindOneProductById,
+			Roles: allRoles,
+		},
 	}
 }
