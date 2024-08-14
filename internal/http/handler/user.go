@@ -120,7 +120,7 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 	claims := userToken.Claims.(*common.JwtCustomClaims)
 	// Check if the user's id same with jwt id
 	if claims.Role != "admin" {
-		return util.JSONResponse(c, http.StatusForbidden, "You don't have access to this user", nil)
+		return util.JSONResponse(c, http.StatusForbidden, "You don't have access to delete this user", nil)
 	}
 	if err := h.userService.Delete(c.Request().Context(), id); err != nil {
 		return util.JSONResponse(c, http.StatusInternalServerError, err.Error(), nil)

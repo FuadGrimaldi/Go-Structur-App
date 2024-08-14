@@ -12,6 +12,8 @@ type ProductRepository interface {
 	FindById(ctx context.Context, id int64) (*entity.Product, error)
 	FindByTitle(ctx context.Context, title string) (*entity.Product, error)
 	Create(ctx context.Context, product *entity.Product) error
+	Update(ctx context.Context, product *entity.Product) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type productRepository struct {
@@ -53,6 +55,20 @@ func (pr *productRepository) FindByTitle(ctx context.Context, title string) (*en
 
 func (pr *productRepository) Create(ctx context.Context, product *entity.Product) error {
 	if err := pr.db.WithContext(ctx).Create(&product).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pr *productRepository) Update(ctx context.Context, product *entity.Product) error {
+	if err := pr.db.WithContext(ctx).Where("id = ?", product.ID).Updates(&product).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pr *productRepository) Delete(ctx context.Context, id int64) error {
+	if err := pr.db.WithContext(ctx).Model(&entity.Product{}).Delete("id = ?", id).Error; err != nil {
 		return err
 	}
 	return nil

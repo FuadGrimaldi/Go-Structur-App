@@ -79,13 +79,15 @@ func (u *userService) Update(ctx context.Context, request dto.UpdateUser)error {
 		return err
 	}
 
-	if request.Name != "" {
-		user.Name = request.Name
-	}
+	if request.Name != "" {user.Name = request.Name}
 
-	if request.Username != "" {
-		user.Username = request.Username
-	}
+	if request.Address != "" {user.Address = request.Address}
+
+	if request.Gender != "" {user.Gender = request.Gender}
+
+	if request.Email != "" {user.Email = request.Email}
+
+	if request.Username != "" {user.Username = request.Username}
 
 	if request.Password != "" {
 		password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)

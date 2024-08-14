@@ -6,6 +6,7 @@ import (
 	"go-app/internal/entity"
 	"go-app/internal/repository"
 	"strings"
+	"time"
 )
 
 type ProductService interface {
@@ -13,6 +14,8 @@ type ProductService interface {
 	Create(ctx context.Context, req dto.NewProduct) error
 	FindOneById(ctx context.Context, id int64) (*dto.Product, error)
 	FindOneByTitle(ctx context.Context, title string) (*dto.Product, error)
+	Update(ctx context.Context, req dto.UpdateProduct) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type productService struct {
@@ -67,4 +70,28 @@ func (ps *productService) Create(ctx context.Context, req dto.NewProduct) error 
 		Price: req.Price,
 	}
 	return ps.repository.Create(ctx, &product)
+}
+
+func (ps *productService) Update(ctx context.Context, req dto.UpdateProduct) error {
+	product, err := ps.repository.FindById(ctx, req.ID)
+	if err != nil {
+		return err
+	}
+
+	if req.Title != "" {product.Title = req.Title}
+	if req.Author != "" {product.Author = req.Author}
+	if req.Publicatio_year != 0 {product.Publicatio_year = req.Publicatio_year}
+	if req.Description != "" {product.Description = req.Description}
+	if req.Category != "" {product.Category = req.Category}
+	if req.ISBN != "" {product.ISBN = req.ISBN}
+	if req.Stoct != 0 {product.Stoct = req.Stoct}
+	if req.Price != 0 {product.Price = req.Price}
+
+	product.UpdatedAt = time.Now()
+
+	return ps.repository.Update(ctx, product)
+}
+
+func (ps *productService) Delete(ctx context.Context, id int64) error {
+	return ps.repository.Delete(ctx, id)
 }

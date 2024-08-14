@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type Product struct {
 	ID              int64   `json:"id"`
 	Title           string  `json:"title"`
@@ -21,4 +23,17 @@ type NewProduct struct {
 	ISBN            string  `json:"isbn"`
 	Stoct           int64   `json:"stoct"`
 	Price           float64 `json:"price"`
+}
+
+type UpdateProduct struct {
+	ID              int64   `json:"id"`
+	Title           string  `json:"title"`
+	Author          string  `json:"author"`
+	Publicatio_year int64   `json:"publication_year"`
+	Description     string  `json:"description"`
+	Category        string  `json:"category"`
+	ISBN            string  `json:"isbn"`
+	Stoct           int64   `json:"stoct"`
+	Price           float64 `json:"price"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
