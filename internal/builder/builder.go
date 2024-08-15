@@ -14,15 +14,18 @@ import (
 func BuildPrivateRoutes(cfg *config.Config, db *gorm.DB) []*router.Route {
 	userRepository := repository.NewUserRepository(db)
 	productRepository := repository.NewProductRepository(db)
-
+	transactionRepository := repository.NewTransactionRepository(db)
+	
 	userService := service.NewUserService(cfg, userRepository)
 	productService := service.NewProductService(productRepository)
+	transactionService := service.NewTransactionService(transactionRepository)
 
 	userHandler := handler.NewHandler(userService)
 	productHandler := handler.NewProductHanlder(productService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 
-	return router.PrivateRoutes(userHandler, productHandler)
+	return router.PrivateRoutes(userHandler, productHandler, transactionHandler)
 }
 
 // no need login

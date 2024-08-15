@@ -48,7 +48,7 @@ func PublicRoutes(UserHandler *handler.UserHandler, AuthHandler *handler.AuthHan
 	}
 }
 
-func PrivateRoutes(UserHandler *handler.UserHandler, ProductHandler *handler.ProductHandler) []*Route {
+func PrivateRoutes(UserHandler *handler.UserHandler, ProductHandler *handler.ProductHandler, TransactionHandler *handler.TransactionHandler) []*Route {
 	return []*Route{
 		{
 			Method: http.MethodGet,
@@ -108,6 +108,12 @@ func PrivateRoutes(UserHandler *handler.UserHandler, ProductHandler *handler.Pro
 			Method: http.MethodDelete,
 			Path: "/products/:id",
 			Handler: ProductHandler.DeleteProduct,
+			Roles: onlyAdmin,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/users/:id/transactions",
+			Handler: TransactionHandler.FindTransactionByUserID,
 			Roles: onlyAdmin,
 		},
 	}
